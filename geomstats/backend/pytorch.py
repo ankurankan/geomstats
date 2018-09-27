@@ -244,7 +244,6 @@ def where(*args, **kwargs):
 
 
 def tile(x, y):
-    # TODO(johmathe): Native tile implementation
     return array(np.tile(x, y))
 
 
