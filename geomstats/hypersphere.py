@@ -192,7 +192,6 @@ class HypersphereMetric(RiemannianMetric):
         """
         tangent_vec = gs.to_ndarray(tangent_vec, to_ndim=2)
         base_point = gs.to_ndarray(base_point, to_ndim=2)
-        # TODO(johmathe): Evaluate the bias introduced by this variable
         norm_tangent_vec = self.embedding_metric.norm(tangent_vec) + EPSILON
         coef_1 = gs.cos(norm_tangent_vec)
         coef_2 = gs.sin(norm_tangent_vec) / norm_tangent_vec
@@ -255,8 +254,6 @@ class HypersphereMetric(RiemannianMetric):
         log = (gs.einsum('ni,nj->nj', coef_1, point)
                - gs.einsum('ni,nj->nj', coef_2, base_point))
 
-        # TODO(nina): This tries to solve the bug of dist not
-        # being 0 between a point and itself
         mask_same_values = gs.isclose(point, base_point)
         mask_else = gs.equal(mask_same_values, gs.array(False))
         mask_else_float = gs.cast(mask_else, gs.float32)
@@ -273,10 +270,6 @@ class HypersphereMetric(RiemannianMetric):
         """
         Geodesic distance between two points.
         """
-        # TODO(nina): case gs.dot(unit_vec, unit_vec) != 1
-        # if gs.all(gs.equal(point_a, point_b)):
-        #    return 0.
-
         norm_a = self.embedding_metric.norm(point_a)
         norm_b = self.embedding_metric.norm(point_b)
         inner_prod = self.embedding_metric.inner_product(point_a, point_b)

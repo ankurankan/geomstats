@@ -82,7 +82,7 @@ class RiemannianMetric(object):
 
         assert gs.ndim(inner_prod) == 2, inner_prod.shape
         return inner_prod
-        
+
     def squared_norm(self, vector, base_point=None):
         """
         Squared norm of a vector associated to the inner product
@@ -238,9 +238,6 @@ class RiemannianMetric(object):
         """
         Frechet mean of (weighted) points.
         """
-        # TODO(nina): profile this code to study performance,
-        # i.e. what to do with sq_dists_between_iterates.
-
         if isinstance(points, list):
             points = gs.vstack(points)
         n_points = gs.shape(points)[0]
@@ -300,7 +297,6 @@ class RiemannianMetric(object):
         Tangent Principal Component Analysis (tPCA) of points
         on the tangent space at a base point.
         """
-        # TODO(nina): It only works for points of ndim=2, adapt to other ndims.
         if base_point is None:
             base_point = self.mean(points)
 

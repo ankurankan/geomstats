@@ -3,8 +3,6 @@ The special orthogonal group SO(n),
 i.e. the Lie group of rotations in n dimensions.
 """
 
-# TODO(nina): make code robust to different types and input structures
-# TODO(nina): should the conversion functions be methods?
 import geomstats.backend as gs
 import geomstats.spd_matrices_space as spd_matrices_space
 
@@ -159,14 +157,12 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                     'n,ni->ni', norms_ratio, regularized_point)
 
             else:
-                # TODO(nina): regularization needed in nD?
                 regularized_point = gs.copy(point)
 
             assert gs.ndim(regularized_point) == 2
 
         elif point_type == 'matrix':
             point = gs.to_ndarray(point, to_ndim=3)
-            # TODO(nina): regularization for matrices?
             regularized_point = gs.copy(point)
 
         return regularized_point
@@ -222,12 +218,9 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                 regularized_vec = mask_else_float * (
                         regularized_vec / coef)
             else:
-                # TODO(nina): regularization needed in nD?
                 regularized_vec = tangent_vec
 
         elif point_type == 'matrix':
-                # TODO(nina): regularization in terms
-                # of skew-symmetric matrices?
                 regularized_vec = tangent_vec
 
         return regularized_vec
@@ -272,12 +265,9 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                         gs.transpose(jacobian,
                                      axes=(0, 2, 1)))
             else:
-                # TODO(nina): is regularization needed in nD?
                 regularized_tangent_vec = tangent_vec
 
         elif point_type == 'matrix':
-            # TODO(nina): regularization in terms
-            # of skew-symmetric matrices?
             regularized_tangent_vec = tangent_vec
 
         return regularized_tangent_vec
@@ -286,7 +276,6 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
         """
         Project a matrix on SO(n), using the Frobenius norm.
         """
-        # TODO(nina): projection when the point_type is not 'matrix'?
         mat = gs.to_ndarray(mat, to_ndim=3)
 
         n_mats, mat_dim_1, mat_dim_2 = mat.shape
@@ -339,7 +328,6 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
         vec = gs.to_ndarray(vec, to_ndim=2)
         n_vecs, vec_dim = gs.shape(vec)
 
-        # TODO(nina): Change gs.cast function for elementary types
         vec_dim = gs.cast(gs.array([vec_dim]), gs.float32)[0]
         mat_dim = int((1. + gs.sqrt(1. + 8. * vec_dim)) / 2.)
         assert mat_dim == self.n
@@ -708,8 +696,6 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
         rot_mat = gs.zeros((n_quaternions,) + (self.n,) * 2)
 
         for i in range(n_quaternions):
-            # TODO(nina): vectorize by applying the composition of
-            # quaternions to the identity matrix
             column_1 = [w[i] ** 2 + x[i] ** 2 - y[i] ** 2 - z[i] ** 2,
                         2 * x[i] * y[i] - 2 * w[i] * z[i],
                         2 * x[i] * z[i] + 2 * w[i] * y[i]]
@@ -968,15 +954,11 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                 tait_bryan_angles)
 
         elif extrinsic_xyz:
-            # TODO(nina): Put a direct implementation here,
-            # instead of converting to matrices first
             rot_mat = self.matrix_from_tait_bryan_angles_extrinsic_xyz(
                 tait_bryan_angles)
             quat = self.quaternion_from_matrix(rot_mat)
 
         elif intrinsic_zyx:
-            # TODO(nina): Put a direct implementation here,
-            # instead of converting to matrices first
             tait_bryan_angles_reversed = gs.flip(tait_bryan_angles, axis=1)
             rot_mat = self.matrix_from_tait_bryan_angles_extrinsic_xyz(
                 tait_bryan_angles_reversed)
@@ -1273,7 +1255,6 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
             random_point = self.regularize(
                 random_point, point_type=point_type)
         elif point_type == 'matrix':
-            # TODO(nina): does this give the uniform distribution on rotations?
             random_matrix = gs.random.rand(n_samples, self.n, self.n)
             random_point = self.projection(random_matrix)
 

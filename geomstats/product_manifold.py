@@ -6,9 +6,6 @@ import geomstats.backend as gs
 
 from geomstats.manifold import Manifold
 
-# TODO(nina): get rid of for loops
-# TODO(nina): unit tests
-
 
 class ProductManifold(Manifold):
     """Class for a product of manifolds."""

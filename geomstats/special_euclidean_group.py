@@ -52,7 +52,6 @@ class SpecialEuclideanGroup(LieGroup):
         super(SpecialEuclideanGroup, self).__init__(
                           dimension=self.dimension)
 
-        # TODO(nina): keep the names rotations and translations here?
         self.rotations = SpecialOrthogonalGroup(n=n)
         self.translations = EuclideanSpace(dimension=n)
 
@@ -112,7 +111,6 @@ class SpecialEuclideanGroup(LieGroup):
 
         elif point_type == 'matrix':
             point = gs.to_ndarray(point, to_ndim=3)
-            # TODO(nina): regularization for matrices?
             regularized_point = gs.copy(point)
 
         return regularized_point
@@ -161,8 +159,6 @@ class SpecialEuclideanGroup(LieGroup):
                 [rotations_vec, tangent_vec[:, dim_rotations:]], axis=1)
 
         elif point_type == 'matrix':
-                # TODO(nina): regularization in terms
-                # of skew-symmetric matrices?
                 regularized_vec = tangent_vec
 
         return regularized_vec
@@ -258,13 +254,10 @@ class SpecialEuclideanGroup(LieGroup):
             inv_rot_mat = rotations.matrix_from_rotation_vector(
                 inverse_rotation)
 
-            #print(translation, 'trans')
             inverse_translation = gs.einsum(
                     'ni,nij->nj',
                     -translation,
                     gs.transpose(inv_rot_mat, axes=(0, 2, 1)))
-            #print(inverse_translation, 'inv_trans')
-            #print(inverse_rotation, 'inv_rot')
 
             inverse_point = gs.concatenate(
                 [inverse_rotation, inverse_translation], axis=1)
@@ -305,23 +298,20 @@ class SpecialEuclideanGroup(LieGroup):
                                           point=rot_vec,
                                           left_or_right=left_or_right,
                                           point_type=point_type)
-            block_zeros_1 = gs.zeros((n_points, dim_rotations, dim_translations))
-            #print(gs.shape(jacobian_rot))
-            #print(gs.shape(block_zeros_1))
+            block_zeros_1 = gs.zeros(
+                (n_points, dim_rotations, dim_translations))
             jacobian_block_line_1 = gs.concatenate(
                 [jacobian_rot, block_zeros_1], axis=2)
-            #jacobian[:, :dim_rotations, :dim_rotations] = jacobian_rot
 
             if left_or_right == 'left':
                 rot_mat = self.rotations.matrix_from_rotation_vector(
                         rot_vec)
                 jacobian_trans = rot_mat
-                block_zeros_2 = gs.zeros((n_points, dim_translations, dim_rotations))
+                block_zeros_2 = gs.zeros(
+                    (n_points, dim_translations, dim_rotations))
                 jacobian_block_line_2 = gs.concatenate(
 
                         [block_zeros_2, jacobian_trans], axis=2)
-
-                #jacobian[:, dim_rotations:, dim_rotations:] = jacobian_trans
 
             else:
                 inv_skew_mat = - self.rotations.skew_matrix_from_vector(
@@ -331,8 +321,6 @@ class SpecialEuclideanGroup(LieGroup):
                 jacobian_block_line_2 = gs.concatenate(
                     [inv_skew_mat, eye], axis=2)
 
-                #jacobian[:, dim_rotations:, :dim_rotations] = inv_skew_mat
-                #jacobian[:, dim_rotations:, dim_rotations:] = gs.eye(self.n)
             jacobian = gs.concatenate(
                 [jacobian_block_line_1, jacobian_block_line_2], axis=1)
 
@@ -548,7 +536,6 @@ class SpecialEuclideanGroup(LieGroup):
         coef_2[mask_close_to_0] = (1. / 6.
                                    - angle[mask_close_to_0] ** 3 / 120.)
 
-        # TODO(nina): check if the discountinuity as 0 is expected.
         coef_1[mask_0] = 0
         coef_2[mask_0] = 0
 
@@ -609,7 +596,6 @@ class SpecialEuclideanGroup(LieGroup):
 
             inv_rot_mats = rotations.matrix_from_rotation_vector(
                     -rotation_vectors)
-            # TODO(nina): this is the same mat multiplied several times
             matrix_aux = gs.matmul(mean_rotation_mat, inv_rot_mats)
             assert matrix_aux.shape == (n_points,) + (dim_rotations,) * 2
 
