@@ -109,7 +109,6 @@ class TestHyperbolicSpaceTensorFlow(tf.test.TestCase):
                                           [3.0, 2.0, 0.0, 2.0]])
         point_int = self.space.extrinsic_to_intrinsic_coords(point_ext)
         result = self.space.intrinsic_to_extrinsic_coords(point_int)
-        # TODO(nina): Make sure this holds for (x, y, z, ..) AND (-x, y,z)
         expected = point_ext
         expected = helper.to_vector(expected)
 
@@ -307,7 +306,6 @@ class TestHyperbolicSpaceTensorFlow(tf.test.TestCase):
         # Riemannian Exp then Riemannian Log
         # General case
         base_point = tf.convert_to_tensor([4.0, 1., 3.0, math.sqrt(5)])
-        # TODO(nina): this fails for high euclidean norms of vector_1
         vector = tf.convert_to_tensor([2.0, 1.0, 1.0, 1.0])
         vector = self.space.projection_to_tangent_space(
                                                   vector=vector,
@@ -316,10 +314,6 @@ class TestHyperbolicSpaceTensorFlow(tf.test.TestCase):
         result = self.metric.log(point=exp, base_point=base_point)
 
         expected = vector
-        norm = gs.linalg.norm(expected)
-        atol = RTOL
-        if norm != 0:
-            atol = RTOL * norm
         with self.test_session():
             self.assertAllClose(gs.eval(result), gs.eval(expected))
 
@@ -355,7 +349,6 @@ class TestHyperbolicSpaceTensorFlow(tf.test.TestCase):
             self.assertAllClose(gs.eval(result), gs.eval(expected))
 
     def test_exp_and_dist_and_projection_to_tangent_space(self):
-        # TODO(nina): this fails for high norms of vector
         base_point = tf.convert_to_tensor([4.0, 1., 3.0, math.sqrt(5)])
         vector = tf.convert_to_tensor([0.001, 0., -.00001, -.00003])
         tangent_vec = self.space.projection_to_tangent_space(
@@ -372,7 +365,6 @@ class TestHyperbolicSpaceTensorFlow(tf.test.TestCase):
             self.assertAllClose(gs.eval(result), gs.eval(expected), atol=1e-2)
 
     def test_geodesic_and_belongs(self):
-        # TODO(nina): this tests fails when geodesic goes "too far"
         initial_point = tf.convert_to_tensor([4.0, 1., 3.0, math.sqrt(5)])
         n_geodesic_points = 100
         vector = tf.convert_to_tensor([1., 0., 0., 0.])

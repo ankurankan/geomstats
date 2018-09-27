@@ -57,7 +57,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
                 'with_angle_2pi': with_angle_2pi,
                 'with_angle_close_2pi_high': with_angle_close_2pi_high}
             }
-        # TODO(nina): add elements for nD
 
         # -- Metrics - only diagonals for now
         canonical_metrics = {n: group.bi_invariant_metric
@@ -128,7 +127,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
                 'with_angle_pi',
                 'with_angle_close_pi_high']
             }
-        # TODO(nina): add elements with angles close to pi in nD
         self.metrics = metrics
         self.n_samples = 10
 
@@ -231,7 +229,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
 
                 # Note: by default, the rotation vector is inverted by
                 # the function regularize when the angle of the rotation is pi.
-                # TODO(nina): should we modify this?
                 angle_type = 'with_angle_pi'
                 point = self.elements[3][angle_type]
                 result = group.regularize(point)
@@ -3346,7 +3343,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
         n = 3
         group = self.so[n]
 
-        # TODO(nina): absolute tolerance for infinitesimal angles?
         # It fails for a tolerance under 1e-4.
         for metric_type in self.metrics[3]:
             for angle_type in self.elements[3]:
@@ -3399,8 +3395,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
         n = 3
         group = self.so[n]
 
-        # TODO(nina): the cut locus is not at pi for non
-        # canonical metrics. Address this edge case.
         angle_types = self.angles_close_to_pi[3]
         for metric_type in self.metrics[3]:
             for angle_type in angle_types:
@@ -3461,7 +3455,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
                 if angle_type in self.angles_close_to_pi[3]:
                     continue
                 for angle_type_base in self.elements[3]:
-                    # TODO(nina): address the edge case with base close to pi
                     if angle_type_base in self.angles_close_to_pi[3]:
                         continue
                     metric = self.metrics[3][metric_type]
@@ -3695,7 +3688,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
         n = 3
         group = self.so[n]
 
-        # TODO(nina): absolute tolerance for infinitesimal angles
         for angle_type in self.elements[3]:
             if angle_type in self.angles_close_to_pi[3]:
                 continue
@@ -3708,8 +3700,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
                                              tangent_vec=tangent_vec,
                                              base_point=base_point)
 
-                # TODO(nina): what does it mean to regularize the tangent
-                # vector when there is no metric?
                 metric = group.left_canonical_metric
                 expected = group.regularize_tangent_vec(
                                      tangent_vec=tangent_vec,
@@ -3747,8 +3737,6 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
                                              tangent_vec=tangent_vec,
                                              base_point=base_point)
 
-                # TODO(nina): what does it mean to regularize the tangent
-                # vector when there is no metric?
                 metric = group.left_canonical_metric
                 reg_tangent_vec = group.regularize_tangent_vec(
                                      tangent_vec=tangent_vec,

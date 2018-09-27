@@ -92,19 +92,16 @@ class TestEuclideanSpaceMethodsTensorFlow(tf.test.TestCase):
 
         result = self.metric.inner_product(n_points_a, one_point_b)
         point_numpy = np.random.uniform(size=(n_samples, 1))
-        # TODO(nina): Fix this test with assertShapeEqual
         with self.test_session():
             self.assertAllClose(point_numpy.shape, gs.eval(gs.shape(result)))
 
         result = self.metric.inner_product(one_point_a, n_points_b)
         point_numpy = np.random.uniform(size=(n_samples, 1))
-        # TODO(nina): Fix this test with assertShapeEqual
         with self.test_session():
             self.assertAllClose(point_numpy.shape, gs.eval(gs.shape(result)))
 
         result = self.metric.inner_product(n_points_a, n_points_b)
         point_numpy = np.random.uniform(size=(n_samples, 1))
-        # TODO(nina): Fix this test with assertShapeEqual
         with self.test_session():
             self.assertAllClose(point_numpy.shape, gs.eval(gs.shape(result)))
 
@@ -192,7 +189,6 @@ class TestEuclideanSpaceMethodsTensorFlow(tf.test.TestCase):
             self.assertAllClose(gs.eval(expected), gs.eval(bool_belongs))
 
     def test_mean(self):
-        # TODO(nina): Fix the fact that it doesn't work for [1., 4.]
         point = tf.convert_to_tensor([[1., 4.]])
         result = self.metric.mean(points=[point, point, point])
         expected = point

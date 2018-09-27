@@ -36,7 +36,6 @@ class TestInvariantMetricMethodsTensorFlow(tf.test.TestCase):
                    left_or_right='right')
 
         # General left and right invariant metrics
-        # TODO(nina): replace by general SPD matrix
         sym_mat_at_identity = gs.eye(group.dimension)
 
         left_metric = InvariantMetric(
@@ -298,7 +297,6 @@ class TestInvariantMetricMethodsTensorFlow(tf.test.TestCase):
         riemannian logarithm are inverse.
         Expect their composition to give the identity function.
         """
-        # TODO(nina): Fix this test.
         # - exp then log
         # For right diagonal metric, point and point_small
         result = helper.exp_then_log_from_identity(

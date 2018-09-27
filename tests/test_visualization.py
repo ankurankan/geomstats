@@ -14,8 +14,6 @@ from geomstats.special_euclidean_group import SpecialEuclideanGroup
 from geomstats.special_orthogonal_group import SpecialOrthogonalGroup
 
 
-# TODO(nina): add tests for examples
-
 class TestVisualizationMethods(unittest.TestCase):
     _multiprocess_can_split_ = True
 
