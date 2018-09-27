@@ -3,9 +3,6 @@
 
 Computations and statistics on manifolds with geometric structures.
 
-- [Geomstats paper](https://arxiv.org/abs/1805.08308) on arxiv.
-- For more in-detph examples, see the [examples repository](https://github.com/geomstats/examples/).
-
 <img src="https://raw.githubusercontent.com/ninamiolane/geomstats/master/examples/imgs/gradient_descent.gif" width=384 height=384><img src="https://raw.githubusercontent.com/ninamiolane/geomstats/master/examples/imgs/h2_grid.png" width=200 height=200>
 
 
@@ -31,14 +28,3 @@ nose2
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
-
-## Authors & Contributors
-
-* Alice Le Brigant
-* Johan Mathe
-* Nina Miolane
-* Xavier Pennec
-
-## Acknowledgements
-
-This work is partially supported by the National Science Foundation, grant NSF DMS RTG 1501767.
