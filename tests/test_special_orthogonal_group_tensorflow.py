@@ -45,12 +45,15 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
                                 * tf.convert_to_tensor([-2., 1., 0.]))
         with_angle_close_2pi_low = ((2 * gs.pi - 1e-9) / gs.sqrt(6.)
                                     * tf.convert_to_tensor([2., 1., -1.]))
-        with_angle_2pi = 2 * gs.pi / gs.sqrt(3.) * tf.convert_to_tensor([1., 1., -1.])
+        with_angle_2pi = (2 * gs.pi / gs.sqrt(3.)
+                          * tf.convert_to_tensor([1., 1., -1.]))
         with_angle_close_2pi_high = ((2 * gs.pi + 1e-9) / gs.sqrt(2.)
                                      * tf.convert_to_tensor([1., 0., -1.]))
 
         elements = {
-            3: {'with_angle_0': with_angle_0,
+            2: {'random_point': tf.convert_to_tensor([0.7])},
+            3: {'random_point': tf.convert_to_tensor([1., -.9, 1.1]),
+                'with_angle_0': with_angle_0,
                 'with_angle_close_0': with_angle_close_0,
                 'with_angle_close_pi_low': with_angle_close_pi_low,
                 'with_angle_pi': with_angle_pi,
@@ -58,9 +61,8 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
                 'with_angle_in_pi_2pi': with_angle_in_pi_2pi,
                 'with_angle_close_2pi_low': with_angle_close_2pi_low,
                 'with_angle_2pi': with_angle_2pi,
-                'with_angle_close_2pi_high': with_angle_close_2pi_high}
+                'with_angle_close_2pi_high': with_angle_close_2pi_high},
             }
-        # TODO(nina): add elements for nD
 
         # -- Metrics - only diagonals for now
         canonical_metrics = {n: group.bi_invariant_metric
@@ -170,31 +172,33 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             with self.test_session():
                 self.assertShapeEqual(point_numpy, result)
 
-#    def test_skew_matrix_from_vector(self):
-#        # Specific to 3D case
-#        n = 3
-#        group = self.so[n]
-#        rot_vec = gs.random.rand(n)
-#        result = group.skew_matrix_from_vector(rot_vec)
-#
-#        self.assertTrue(gs.allclose(gs.dot(result, rot_vec), gs.zeros(n)))
-#
-#    def test_skew_matrix_and_vector(self):
-#        point_type = 'vector'
-#        for n in self.n_seq:
-#            group = self.so[n]
-#            rot_vec = group.random_uniform(
-#                point_type=point_type)
-#
-#            skew_mat = group.skew_matrix_from_vector(rot_vec)
-#            result = group.vector_from_skew_matrix(skew_mat)
-#            expected = rot_vec
-#
-#            self.assertTrue(gs.allclose(result, expected),
-#                            'result = {};'
-#                            ' expected = {}.'.format(result,
-#                                                     expected))
-#
+    def test_skew_matrix_from_vector(self):
+        # Specific to 3D case
+        n = 3
+        group = self.so[n]
+        rot_vec = self.elements[n]['random_point']
+        rot_vec = helper.to_vector(rot_vec)
+        result = group.skew_matrix_from_vector(rot_vec)
+
+        product = gs.einsum('nij,nj->ni', result, rot_vec)
+        zeros = gs.zeros((1, n))
+
+        with self.test_session():
+            self.assertAllClose(gs.eval(product), gs.eval(zeros))
+
+    def test_skew_matrix_and_vector(self):
+        point_type = 'vector'
+        for n in self.n_seq:
+            group = self.so[n]
+            rot_vec = self.elements[n]['random_point']
+
+            skew_mat = group.skew_matrix_from_vector(rot_vec)
+            result = group.vector_from_skew_matrix(skew_mat)
+            expected = rot_vec
+
+        with self.test_session():
+            self.assertAllClose(gs.eval(result), gs.eval(expected))
+
 #    def test_skew_matrix_from_vector_vectorization(self):
 #        point_type = 'vector'
 #        n_samples = self.n_samples
