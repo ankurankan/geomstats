@@ -304,9 +304,9 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
             inv_sqrt_mat = gs.zeros_like(mat)
             for i in range(n_mats):
                 sym_mat = aux_mat[i]
+                mask_i_float = get_mask_i_float(i, n_mats)
 
-                assert spd_matrices_space.is_symmetric(sym_mat)
-                inv_sqrt_mat[i] = gs.linalg.inv(
+                inv_sqrt_mat = mask_i_float * gs.linalg.inv(
                     spd_matrices_space.sqrtm(sym_mat))
             rot_mat = gs.matmul(mat, inv_sqrt_mat)
 

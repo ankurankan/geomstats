@@ -154,6 +154,7 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             rot_mat_plus_delta = rot_mat + delta
             result = group.projection(rot_mat_plus_delta)
             expected = rot_mat
+            expected = helper.to_matrix(expected)
 
         with self.test_session():
             self.assertAllClose(gs.eval(result), gs.eval(expected))
