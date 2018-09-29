@@ -306,8 +306,10 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                 sym_mat = aux_mat[i]
                 mask_i_float = get_mask_i_float(i, n_mats)
 
-                inv_sqrt_mat = mask_i_float * gs.linalg.inv(
-                    spd_matrices_space.sqrtm(sym_mat))
+                inv_sqrt_mat = gs.einsum(
+                        'n,nij->nij',
+                        mask_i_float,
+                        gs.linalg.inv(spd_matrices_space.sqrtm(sym_mat)))
             rot_mat = gs.matmul(mat, inv_sqrt_mat)
 
         assert gs.ndim(rot_mat) == 3

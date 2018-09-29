@@ -3,6 +3,7 @@ Unit tests for special orthogonal group SO(n) on tensorflow.
 """
 
 import importlib
+import numpy as np
 import os
 import tensorflow as tf
 
@@ -159,15 +160,16 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
         with self.test_session():
             self.assertAllClose(gs.eval(result), gs.eval(expected))
 
-#    def test_projection_vectorization(self):
-#        for n in self.n_seq:
-#            group = self.so[n]
-#            n_samples = self.n_samples
-#            mats = gs.random.rand(n_samples, n, n)
-#            result = group.projection(mats)
-#            self.assertTrue(gs.allclose(result.shape,
-#                                        (n_samples, n, n)))
-#
+    def test_projection_vectorization(self):
+        for n in self.n_seq:
+            group = self.so[n]
+            n_samples = self.n_samples
+            mats = gs.random.rand(n_samples, n, n)
+            result = group.projection(mats)
+            point_numpy = np.zeros((n_samples, n, n))
+            with self.test_session():
+                self.assertShapeEqual(point_numpy, result)
+
 #    def test_skew_matrix_from_vector(self):
 #        # Specific to 3D case
 #        n = 3
