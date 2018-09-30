@@ -13,6 +13,10 @@ float32 = tf.float32
 float64 = tf.float64
 
 
+def reshape(*args, **kwargs):
+    return tf.reshape(*args, **kwargs)
+
+
 def arange(*args, **kwargs):
     return tf.range(*args, **kwargs)
 

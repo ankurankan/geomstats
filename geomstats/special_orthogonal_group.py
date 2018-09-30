@@ -329,11 +329,11 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
         vec_dim = gs.shape(vec)[1]
 
         # TODO(nina): Change gs.cast function for elementary types
-        vec_dim = gs.cast(gs.array([vec_dim]), gs.float32)[0]
+        vec_dim = gs.cast(gs.array([vec_dim]), gs.float32)
+        vec_dim = vec_dim[0]
         mat_dim = gs.cast(((1. + gs.sqrt(1. + 8. * vec_dim)) / 2.), gs.int32)
 
         skew_mat = gs.zeros((n_vecs,) + (self.n,) * 2)
-        skew_mat_before = gs.zeros((n_vecs,) + (self.n,) * 2)
         if self.n == 3:
             levi_civita_symbol = gs.array([
                 [[0., 0., 0.],
@@ -373,16 +373,19 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                 [cross_prod_1, cross_prod_2, cross_prod_3], axis=1)
 
         else:
-            upper_triangle_indices = gs.triu_indices(mat_dim, k=1)
+            n_vecs, mat_dim, _ = skew_mat.shape
+
             # n_points_tensor = gs.array(n_points)
             start = 0
-            length = mat_dim -1
+            length = mat_dim - 1
             end = start + length
             line_vec = vec[:, start:end]
             line_vec = gs.reshape(line_vec, (n_vecs, 1, length))
+
             line_zeros = gs.zeros((n_vecs, 1, mat_dim - length))
             skew_mat_lines = gs.concatenate([line_zeros, line_vec], axis=2)
             start = end
+            _, n1, _ = skew_mat.shape
             for length in range(mat_dim - 2, -1, -1):
                 end = start + length
                 line_vec = vec[:, start:end]
