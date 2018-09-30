@@ -418,6 +418,7 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
             for j in range(mat_dim_1):
                 for i in range(j):
                     mask_idx_float = get_mask_i_float(idx, vec_dim)
+                    mask_idx_float = gs.to_ndarray(mask_idx_float, to_ndim=2)
                     mask_idx_float = gs.tile(mask_idx_float, (n_skew_mats, 1))
                     vec += gs.einsum(
                             'ni,n->ni',

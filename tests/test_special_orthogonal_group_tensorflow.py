@@ -195,6 +195,7 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             skew_mat = group.skew_matrix_from_vector(rot_vec)
             result = group.vector_from_skew_matrix(skew_mat)
             expected = rot_vec
+            expected = helper.to_vector(expected)
 
         with self.test_session():
             self.assertAllClose(gs.eval(result), gs.eval(expected))
