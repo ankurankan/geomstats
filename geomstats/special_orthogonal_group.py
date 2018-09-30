@@ -417,7 +417,12 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
             idx = 0
             for j in range(mat_dim_1):
                 for i in range(j):
-                    vec[:, idx] = skew_mat[:, i, j]
+                    mask_idx_float = get_mask_i_float(idx, vec_dim)
+                    mask_idx_float = gs.tile(mask_idx_float, (n_skew_mats, 1))
+                    vec += gs.einsum(
+                            'ni,n->ni',
+                            mask_idx_float,
+                            skew_mat[:, i, j])
                     idx += 1
 
         assert gs.ndim(vec) == 2
