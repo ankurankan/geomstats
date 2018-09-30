@@ -306,7 +306,7 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                 sym_mat = aux_mat[i]
                 mask_i_float = get_mask_i_float(i, n_mats)
 
-                inv_sqrt_mat = gs.einsum(
+                inv_sqrt_mat += gs.einsum(
                         'n,nij->nij',
                         mask_i_float,
                         gs.linalg.inv(spd_matrices_space.sqrtm(sym_mat)))
@@ -333,6 +333,7 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
         mat_dim = gs.cast(((1. + gs.sqrt(1. + 8. * vec_dim)) / 2.), gs.int32)
 
         skew_mat = gs.zeros((n_vecs,) + (self.n,) * 2)
+        skew_mat_before = gs.zeros((n_vecs,) + (self.n,) * 2)
         if self.n == 3:
             levi_civita_symbol = gs.array([
                 [[0., 0., 0.],
@@ -373,9 +374,27 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
 
         else:
             upper_triangle_indices = gs.triu_indices(mat_dim, k=1)
-            for i in range(n_vecs):
-                skew_mat[i][upper_triangle_indices] = vec[i]
-                skew_mat[i] = skew_mat[i] - skew_mat[i].transpose()
+            # n_points_tensor = gs.array(n_points)
+            start = 0
+            length = mat_dim -1
+            end = start + length
+            line_vec = vec[:, start:end]
+            line_vec = gs.reshape(line_vec, (n_vecs, 1, length))
+            line_zeros = gs.zeros((n_vecs, 1, mat_dim - length))
+            skew_mat_lines = gs.concatenate([line_zeros, line_vec], axis=2)
+            start = end
+            for length in range(mat_dim - 2, -1, -1):
+                end = start + length
+                line_vec = vec[:, start:end]
+                line_vec = gs.reshape(line_vec, (n_vecs, 1, length))
+                line_zeros = gs.zeros((n_vecs, 1, mat_dim - length))
+                line = gs.concatenate([line_zeros, line_vec], axis=2)
+                skew_mat_lines = gs.concatenate([skew_mat_lines, line], axis=1)
+                start = end
+
+            skew_mat = skew_mat_lines
+            skew_mat = skew_mat - gs.transpose(skew_mat, axes=(0, 2, 1))
+
         assert gs.ndim(skew_mat) == 3
         return skew_mat
 

@@ -8,6 +8,14 @@ float32 = np.float32
 float64 = np.float64
 
 
+def reshape(*args, **kwargs):
+    return np.reshape(*args, **kwargs)
+
+
+def empty(*args, **kwargs):
+    return np.empty(*args, **kwargs)
+
+
 def boolean_mask(x, mask):
     return x[mask]
 

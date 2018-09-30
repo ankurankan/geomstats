@@ -130,7 +130,7 @@ class TestSpecialOrthogonalGroupMethods(unittest.TestCase):
             }
         # TODO(nina): add elements with angles close to pi in nD
         self.metrics = metrics
-        self.n_samples = 10
+        self.n_samples = 5
 
     def test_projection(self):
         # Test 3D and nD cases
