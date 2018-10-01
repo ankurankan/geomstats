@@ -200,33 +200,42 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
         with self.test_session():
             self.assertAllClose(gs.eval(result), gs.eval(expected))
 
-#    def test_skew_matrix_from_vector_vectorization(self):
-#        point_type = 'vector'
-#        n_samples = self.n_samples
-#        for n in self.n_seq:
-#            group = self.so[n]
-#            rot_vecs = group.random_uniform(
-#                n_samples=n_samples, point_type=point_type)
-#            result = group.skew_matrix_from_vector(rot_vecs)
-#
-#            self.assertTrue(gs.allclose(result.shape,
-#                                        (n_samples, n, n)))
-#
-#    def test_random_and_belongs(self):
-#        for n in self.n_seq:
-#            group = self.so[n]
-#            point = group.random_uniform()
-#            self.assertTrue(group.belongs(point),
-#                            'n = {}\n'
-#                            'point = {}'.format(n, point))
-#
-#    def test_random_and_belongs_vectorization(self):
-#        n_samples = self.n_samples
-#        for n in self.n_seq:
-#            group = self.so[n]
-#            points = group.random_uniform(n_samples=n_samples)
-#            self.assertTrue(gs.all(group.belongs(points)))
-#
+    def test_skew_matrix_from_vector_vectorization(self):
+        point_type = 'vector'
+        n_samples = self.n_samples
+        for n in self.n_seq:
+            group = self.so[n]
+            rot_vecs = group.random_uniform(
+                n_samples=n_samples, point_type=point_type)
+            result = group.skew_matrix_from_vector(rot_vecs)
+
+            with self.test_session():
+                self.assertAllClose(gs.eval(result).shape,
+                                    (n_samples, n, n))
+
+    def test_random_and_belongs(self):
+        for n in self.n_seq:
+            group = self.so[n]
+            point = group.random_uniform()
+            result = group.belongs(point)
+            expected = gs.array([[True]])
+
+            print(result, 'res')
+            print(expected, 'exp')
+            with self.test_session():
+                self.assertAllClose(gs.eval(result), gs.eval(expected))
+
+    def test_random_and_belongs_vectorization(self):
+        n_samples = self.n_samples
+        for n in self.n_seq:
+            group = self.so[n]
+            points = group.random_uniform(n_samples=n_samples)
+            result = group.belongs(points)
+            expected = gs.array([[True]] * n_samples)
+
+            with self.test_session():
+                self.assertAllClose(gs.eval(result), gs.eval(expected))
+
 #    def test_regularize(self):
 #        # Specific to 3D
 #        for n in self.n_seq:
