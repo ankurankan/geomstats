@@ -84,20 +84,29 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
 
         if point_type == 'vector':
             point = gs.to_ndarray(point, to_ndim=2)
-            _, vec_dim = point.shape
+            n_vecs, vec_dim = point.shape
             mask = vec_dim == self.dimension
+            mask = gs.to_ndarray(mask, to_ndim=1)
+
+            mask = gs.tile(mask, (n_vecs,))
 
         elif point_type == 'matrix':
             point = gs.to_ndarray(point, to_ndim=3)
+            n_mats, mat_dim, _ = point.shape
             point_transpose = gs.transpose(point, axes=(0, 2, 1))
-            point_inverse = gs.linalg.inv(point)
+            composition = gs.einsum(
+                    'nij,njk->nik',
+                    point,
+                    point_transpose)
 
-            mask = gs.isclose(point_inverse, point_transpose)
+            identity = gs.eye(self.n)
+            identity = gs.to_ndarray(identity, to_ndim=3)
+            identity = gs.tile(identity, (n_mats, 1, 1))
+
+            mask = gs.isclose(composition, identity, atol=ATOL)
             mask = gs.all(mask, axis=(1, 2))
 
-        mask = gs.to_ndarray(mask, to_ndim=1)
         mask = gs.to_ndarray(mask, to_ndim=2, axis=1)
-
         return mask
 
     def regularize(self, point, point_type=None):
@@ -115,7 +124,6 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
 
         if point_type == 'vector':
             point = gs.to_ndarray(point, to_ndim=2)
-            assert self.belongs(point, point_type)
             n_points, _ = point.shape
 
             regularized_point = point
@@ -344,24 +352,39 @@ class SpecialOrthogonalGroup(LieGroup, EmbeddedManifold):
                  [0., 0., 0.]]
                 ])
 
+            #levi_civita_symbol = gs.tile(
+            #    levi_civita_symbol, (n_vecs, 1, 1))
+
             basis_vec_1 = gs.array([[1., 0., 0.]])
             basis_vec_2 = gs.array([[0., 1., 0.]])
             basis_vec_3 = gs.array([[0., 0., 1.]])
-            cross_prod_1 = gs.einsum(
-                'ijk,ni,nj->nk',
-                levi_civita_symbol,
+
+            cross_prod_1_aux = gs.einsum(
+                'ni,nj->nij',
                 basis_vec_1,
                 vec)
-            cross_prod_2 = gs.einsum(
-                'ijk,ni,nj->nk',
+            cross_prod_1 = gs.einsum(
+                'ijk,nij->nk',
                 levi_civita_symbol,
+                cross_prod_1_aux)
+
+            cross_prod_2_aux = gs.einsum(
+                'ni,nj->nij',
                 basis_vec_2,
                 vec)
-            cross_prod_3 = gs.einsum(
-                'ijk,ni,nj->nk',
+            cross_prod_2 = gs.einsum(
+                'ijk,nij->nk',
                 levi_civita_symbol,
+                cross_prod_2_aux)
+
+            cross_prod_3_aux = gs.einsum(
+                'ni,nj->nij',
                 basis_vec_3,
                 vec)
+            cross_prod_3 = gs.einsum(
+                'ijk,nij->nk',
+                levi_civita_symbol,
+                cross_prod_3_aux)
 
             cross_prod_1 = gs.to_ndarray(cross_prod_1, to_ndim=3, axis=1)
             cross_prod_2 = gs.to_ndarray(cross_prod_2, to_ndim=3, axis=1)

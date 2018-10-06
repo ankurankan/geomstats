@@ -208,10 +208,11 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             rot_vecs = group.random_uniform(
                 n_samples=n_samples, point_type=point_type)
             result = group.skew_matrix_from_vector(rot_vecs)
+            point_numpy = gs.zeros((n_samples, n, n))
 
             with self.test_session():
-                self.assertAllClose(gs.eval(result).shape,
-                                    (n_samples, n, n))
+                self.assertAllClose(
+                    gs.eval(gs.shape(result)), gs.eval(gs.shape(result)))
 
     def test_random_and_belongs(self):
         for n in self.n_seq:
@@ -220,19 +221,16 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             result = group.belongs(point)
             expected = gs.array([[True]])
 
-            print(result, 'res')
-            print(expected, 'exp')
             with self.test_session():
                 self.assertAllClose(gs.eval(result), gs.eval(expected))
 
     def test_random_and_belongs_vectorization(self):
-        n_samples = self.n_samples
+        n_samples = 4
         for n in self.n_seq:
             group = self.so[n]
             points = group.random_uniform(n_samples=n_samples)
             result = group.belongs(points)
-            expected = gs.array([[True]] * n_samples)
-
+            expected = tf.convert_to_tensor([[True]] * n_samples)
             with self.test_session():
                 self.assertAllClose(gs.eval(result), gs.eval(expected))
 
