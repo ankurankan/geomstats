@@ -234,98 +234,98 @@ class TestSpecialOrthogonalGroupMethods(tf.test.TestCase):
             with self.test_session():
                 self.assertAllClose(gs.eval(result), gs.eval(expected))
 
-#    def test_regularize(self):
-#        # Specific to 3D
-#        for n in self.n_seq:
-#            group = self.so[n]
-#
-#            if n == 3:
-#                point = self.elements[3]['with_angle_0']
-#                self.assertFalse(gs.linalg.norm(point) != 0)
-#                result = group.regularize(point)
-#                expected = point
-#                self.assertTrue(gs.allclose(result, expected), '! angle 0 !')
-#
-#                less_than_pi = ['with_angle_close_0',
-#                                'with_angle_close_pi_low']
-#                for angle_type in less_than_pi:
-#                    point = self.elements[3][angle_type]
-#                    result = group.regularize(point)
-#                    expected = point
-#                    self.assertTrue(gs.allclose(result, expected),
-#                                    'angle_type = {};'
-#                                    'result = {};'
-#                                    ' expected = {}.'.format(angle_type,
-#                                                             result,
-#                                                             expected))
-#
-#                # Note: by default, the rotation vector is inverted by
-#                # the function regularize when the angle of the rotation is pi.
-#                # TODO(nina): should we modify this?
-#                angle_type = 'with_angle_pi'
-#                point = self.elements[3][angle_type]
-#                result = group.regularize(point)
-#                expected = point
-#                self.assertTrue(gs.allclose(result, expected), angle_type)
-#
-#                angle_type = 'with_angle_close_pi_high'
-#                point = self.elements[3][angle_type]
-#                result = group.regularize(point)
-#                expected = point / gs.linalg.norm(point) * gs.pi
-#                self.assertTrue(gs.allclose(result, expected), angle_type)
-#
-#                in_pi_2pi = ['with_angle_in_pi_2pi',
-#                             'with_angle_close_2pi_low']
-#
-#                for angle_type in in_pi_2pi:
-#                    point = self.elements[3][angle_type]
-#                    point_initial = point
-#                    angle = gs.linalg.norm(point)
-#                    new_angle = gs.pi - (angle - gs.pi)
-#
-#                    point_initial = point
-#                    result = group.regularize(point)
-#
-#                    expected = - (new_angle / angle) * point_initial
-#                    self.assertTrue(gs.allclose(result, expected),
-#                                    'angle_type = {}\n'
-#                                    'point = {}\n'
-#                                    'angle = {}\n'
-#                                    'new_angle = {}\n'
-#                                    'result = {}\n'
-#                                    'norm(result) = {}\n'
-#                                    'expected = {}\n'
-#                                    'norm(expected) = {}'.format(
-#                                        angle_type,
-#                                        point,
-#                                        angle,
-#                                        new_angle,
-#                                        result,
-#                                        gs.linalg.norm(result),
-#                                        expected,
-#                                        gs.linalg.norm(expected)))
-#
-#                angle_type = 'with_angle_2pi'
-#                point = self.elements[3][angle_type]
-#                result = group.regularize(point)
-#                expected = gs.array([0., 0., 0.])
-#                self.assertTrue(gs.allclose(result, expected), angle_type)
-#
-#                angle_type = 'with_angle_close_2pi_high'
-#                point = self.elements[3][angle_type]
-#                angle = gs.linalg.norm(point)
-#                new_angle = angle - 2 * gs.pi
-#
-#                result = group.regularize(point)
-#                expected = new_angle * point / angle
-#                self.assertTrue(gs.allclose(result, expected), angle_type)
-#
-#            else:
-#                point = group.random_uniform(n_samples=1)
-#                result = group.regularize(point)
-#                expected = point
-#                self.assertTrue(gs.allclose(result, expected))
-#
+    def test_regularize(self):
+        # Specific to 3D
+        for n in self.n_seq:
+            group = self.so[n]
+
+            if n == 3:
+                point = self.elements[3]['with_angle_0']
+                result = group.regularize(point)
+                expected = point
+                with self.test_session():
+                    self.assertAllClose(gs.eval(result), gs.eval(expected))
+
+                less_than_pi = ['with_angle_close_0',
+                                'with_angle_close_pi_low']
+                for angle_type in less_than_pi:
+                    point = self.elements[3][angle_type]
+                    result = group.regularize(point)
+                    expected = point
+                    self.assertTrue(gs.allclose(result, expected),
+                                    'angle_type = {};'
+                                    'result = {};'
+                                    ' expected = {}.'.format(angle_type,
+                                                             result,
+                                                             expected))
+
+                # Note: by default, the rotation vector is inverted by
+                # the function regularize when the angle of the rotation is pi.
+                # TODO(nina): should we modify this?
+                angle_type = 'with_angle_pi'
+                point = self.elements[3][angle_type]
+                result = group.regularize(point)
+                expected = point
+                self.assertTrue(gs.allclose(result, expected), angle_type)
+
+                angle_type = 'with_angle_close_pi_high'
+                point = self.elements[3][angle_type]
+                result = group.regularize(point)
+                expected = point / gs.linalg.norm(point) * gs.pi
+                self.assertTrue(gs.allclose(result, expected), angle_type)
+
+                in_pi_2pi = ['with_angle_in_pi_2pi',
+                             'with_angle_close_2pi_low']
+
+                for angle_type in in_pi_2pi:
+                    point = self.elements[3][angle_type]
+                    point_initial = point
+                    angle = gs.linalg.norm(point)
+                    new_angle = gs.pi - (angle - gs.pi)
+
+                    point_initial = point
+                    result = group.regularize(point)
+
+                    expected = - (new_angle / angle) * point_initial
+                    self.assertTrue(gs.allclose(result, expected),
+                                    'angle_type = {}\n'
+                                    'point = {}\n'
+                                    'angle = {}\n'
+                                    'new_angle = {}\n'
+                                    'result = {}\n'
+                                    'norm(result) = {}\n'
+                                    'expected = {}\n'
+                                    'norm(expected) = {}'.format(
+                                        angle_type,
+                                        point,
+                                        angle,
+                                        new_angle,
+                                        result,
+                                        gs.linalg.norm(result),
+                                        expected,
+                                        gs.linalg.norm(expected)))
+
+                angle_type = 'with_angle_2pi'
+                point = self.elements[3][angle_type]
+                result = group.regularize(point)
+                expected = gs.array([0., 0., 0.])
+                self.assertTrue(gs.allclose(result, expected), angle_type)
+
+                angle_type = 'with_angle_close_2pi_high'
+                point = self.elements[3][angle_type]
+                angle = gs.linalg.norm(point)
+                new_angle = angle - 2 * gs.pi
+
+                result = group.regularize(point)
+                expected = new_angle * point / angle
+                self.assertTrue(gs.allclose(result, expected), angle_type)
+
+            else:
+                point = group.random_uniform(n_samples=1)
+                result = group.regularize(point)
+                expected = point
+                self.assertTrue(gs.allclose(result, expected))
+
 #    def test_regularize_vectorization(self):
 #        for point_type in ('vector', 'matrix'):
 #            for n in self.n_seq:
